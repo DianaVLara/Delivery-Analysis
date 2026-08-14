@@ -25,6 +25,7 @@ The dataset contains 15 columns covering order details, delivery timing, and out
 | Notebook | Description |
 |---|---|
 | [`01_Data_Exploration.ipynb`](./01_Data_Exploration.ipynb) | Initial exploration: data quality checks, delivery time stats, threshold-based breakdowns by hub/driver, and delay reason analysis |
+| [`02_Data_Cleaning_and_Customer_Satisfaction.ipynb`](./02_Data_Cleaning_and_Customer_Satisfaction.ipynb) | Full data cleaning checklist (missing values, duplicates, date parsing, range checks), plus an investigation into how delivery time affects customer satisfaction |
 
 ## Key Findings
 
@@ -32,6 +33,8 @@ The dataset contains 15 columns covering order details, delivery timing, and out
 - Average delivery time is **35.78 hours**, while the median is **33.06 hours** — the gap indicates a right-skewed distribution, where a small number of very slow deliveries (120+ hours) pull the average upward.
 - Average delivery time by hub is fairly consistent (35.2–36.5 hours across all six hubs), suggesting hub location alone isn't a major driver of delay.
 - Reusable functions (`breakdown_by_group()`, `delay_reason_breakdown()`, `delivery_count_by_threshold()`) allow quick re-analysis across any time threshold, direction (under/over), or grouping column.
+- The dataset passed a full cleaning checklist (no duplicates, no out-of-range values) — the only missing data (252 rows) is fully explained by legitimate order cancellations.
+- Delivery time and customer satisfaction show a weak overall correlation (-0.287), but a bucketed breakdown reveals a **sharp satisfaction "tipping point" at 3 days** — satisfaction is stable under 72 hours (~4.3/5), then drops to 3.04 for 3-5 day deliveries, and falls to 1.78 for deliveries over 5 days.
 
 ## Tools & Concepts Used
 
@@ -42,6 +45,6 @@ The dataset contains 15 columns covering order details, delivery timing, and out
 
 ## Next Steps
 
-- Explore correlation between `Delivery Time Hours` and `Customer Satisfaction Score`
-- Analyze delivery time trends over time using `Order Date`
+- Investigate what's driving deliveries past the 3-day satisfaction tipping point (which hubs/drivers/delay reasons are overrepresented in that group)
+- Analyze delivery time trends over time using the now-cleaned `Order Date` column
 - Break down on-time performance (`Is Delayed` / `Is On Time`) by hub, driver, and vehicle type
