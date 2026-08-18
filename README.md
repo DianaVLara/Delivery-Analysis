@@ -37,6 +37,7 @@ Three supplementary tables provide additional detail, joined to the main dataset
 | [`03_Time_Trends_and_KPI_Dashboard.ipynb`](./03_Time_Trends_and_KPI_Dashboard.ipynb) | Monthly performance trends over 24 months, plus a reusable operational KPI dashboard function broken down by hub and driver |
 | [`04_SQL_Multi_Table_Analysis.ipynb`](./04_SQL_Multi_Table_Analysis.ipynb) | Integrates Drivers, Hubs, and Vehicles tables via SQLite; tests whether driver ratings, experience, and vehicle status/maintenance data actually predict delivery outcomes, using SQL joins and aggregations |
 | [`05_Seasonal_Trends_and_Visualizations.ipynb`](./05_Seasonal_Trends_and_Visualizations.ipynb) | Deep dive into the May–July 2024 performance dip using matplotlib and seaborn (histograms, scatter plots, box plots, time-series); reveals the dip came from operational stress affecting typical deliveries, not a broken distribution tail |
+| [`06_Hub_Capacity_and_Performance_Analysis.ipynb`](./06_Hub_Capacity_and_Performance_Analysis.ipynb) | Tests whether hub operating capacity correlates with delivery performance; finds that capacity utilization does NOT predict performance overall, and May-July 2024 dip was geographically localized (El Paso, Fort Worth hit hardest), not capacity-driven |
 
 ## Key Findings
 
@@ -52,17 +53,19 @@ Three supplementary tables provide additional detail, joined to the main dataset
 - Driver-level satisfaction differences are narrow (0.17-point spread, best to worst), the weakest signal found in the project. One driver (Karen Hernandez) stands out with both the slowest average delivery time and lowest satisfaction score, though a delay-reason investigation found no specific identifiable cause, an honest null result rather than a forced explanation.
 - Integrating driver and vehicle data via SQL revealed a consistent null result across four separate "quality" signals, `Performance Rating`, `Experience Years`, `Vehicle Status`, and `Maintenance count Alert` (found to be redundant with Vehicle Status). **None showed a meaningful relationship** with delivery time, satisfaction, or breakdown-delay rate. This suggests operational outcomes are driven by factors other than the driver/vehicle attributes captured in these tables.
 - Vehicles currently flagged "Maintenance" showed a breakdown-delay rate (2.14%) nearly identical to "Active" vehicles (2.26%), counter to the intuitive expectation, and a reminder to normalize by volume rather than compare raw counts.
+- **Hub capacity vs. performance, a null result:** Dallas Main Hub operates at 122% utilization (only hub significantly over-capacity), yet shows identical average delivery time and mid-range satisfaction compared to hubs at 75% utilization. Capacity utilization does NOT predict performance, suggesting operational outcomes are driven by factors other than stated capacity.
+- **May-July 2024 dip was geographically localized, not capacity-driven:** El Paso Hub (75.5% utilization) experienced the worst dip (+3.09 hrs), followed by Fort Worth (75.3%, +2.13 hrs). Remarkably, Dallas Main (122.4% utilization) showed minimal dip (+0.14 hrs). This geographic pattern contradicts the capacity hypothesis and suggests the May-July slowdown had location-specific causes (weather, regional events, route changes) rather than company-wide capacity constraints.
 
 ## Tools & Concepts Used
 
 - **pandas** — filtering, `.groupby()`, `.agg()`, handling missing data, merging/joining data sources
 - **SQL / SQLite** — `JOIN`, `GROUP BY`, aggregate functions (`COUNT`, `AVG`, `ROUND`), multi-table relational analysis via `sqlite3` and `pd.read_sql()`
+- **matplotlib & seaborn** — line plots, histograms, box plots, scatter plots for statistical visualization
 - **NumPy** — underlying numerical operations
 - **Core Python** — `len()`, `sum()`, `round()`, `sorted()`, `enumerate()`, `zip()`, custom functions
-- **matplotlib** — distribution visualization
 
 ## Next Steps
 
+- Investigate operational capacity and staffing levels during May–July 2024 to test the hypothesis that operational stress (not mechanical failure) drove the dip
 - Explore `Hubs.csv`'s `Hub Capacity` field against order volume per hub, to test whether hubs operating over/under capacity show different performance
-- Investigate whether `Order Date` timing could approximate vehicle status at time of delivery, rather than relying on the current status snapshot
-- Explore whether the May–July 2024 dip correlates with any external/seasonal factor
+- If external data becomes available (weather, regional events, holidays), test correlation with the May–July 2024 slowdown
