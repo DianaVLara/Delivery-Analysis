@@ -1,6 +1,6 @@
 # Delivery Performance Data Analysis
 
-Exploratory data analysis of a delivery operations dataset using Python and pandas — covering data quality checks, delivery time distributions, threshold-based filtering, and delay reason analysis.
+Exploratory data analysis of a delivery operations dataset using Python, pandas, and SQL covering data quality checks, delivery time distributions, threshold-based filtering, delay reason analysis, time trends, and multi-table SQL analysis across orders, drivers, hubs, and vehicles.
 
 ## Project Overview
 
@@ -18,7 +18,15 @@ The dataset contains 15 columns covering order details, delivery timing, and out
 
 `Order ID`, `Actual Delivery Date`, `Delay Reason`, `Driver ID`, `Driver Name`, `Hub Name`, `Is Delayed`, `Is On Time`, `Order Date`, `Order Status`, `Vehicle Name`, `Vehicle Type`, `Customer Satisfaction Score`, `Delivery Time Hours`, `Hub Processing Time Hours`
 
-> Note: the raw data file is not included in this repo. To run the notebook, add your own CSV and update the file path in the first code cell.
+Three supplementary tables provide additional detail, joined to the main dataset via SQLite:
+
+| Table | Columns | Join key |
+|---|---|---|
+| `Drivers.csv` | DriverID, DriverName, Employment Type, Hire Date, Experience Years, Performance Rating | `DriverID` ↔ `Driver ID` |
+| `Hubs.csv` | Hub ID, HubName, Hub Capacity | `HubName` ↔ `Hub Name` |
+| `Vehicles.csv` | Purchase Date, Vehicle ID, Vehicle Model, Vehicle Status, Breakdown, Maintenance count Alert, Vehicle Code | `Vehicle Code` ↔ `Vehicle Name` |
+
+> Note: the raw data files are not included in this repo. To run the notebooks, add your own CSVs and update the file paths in the first code cell of each.
 
 ## Notebooks
 
@@ -27,6 +35,7 @@ The dataset contains 15 columns covering order details, delivery timing, and out
 | [`01_Data_Exploration.ipynb`](./01_Data_Exploration.ipynb) | Initial exploration: data quality checks, delivery time stats, threshold-based breakdowns by hub/driver, and delay reason analysis |
 | [`02_Data_Cleaning_and_Customer_Satisfaction.ipynb`](./02_Data_Cleaning_and_Customer_Satisfaction.ipynb) | Full data cleaning checklist (missing values, duplicates, date parsing, range checks), plus an investigation into how delivery time affects customer satisfaction |
 | [`03_Time_Trends_and_KPI_Dashboard.ipynb`](./03_Time_Trends_and_KPI_Dashboard.ipynb) | Monthly performance trends over 24 months, plus a reusable operational KPI dashboard function broken down by hub and driver |
+| [`04_SQL_Multi_Table_Analysis.ipynb`](./04_SQL_Multi_Table_Analysis.ipynb) | Integrates Drivers, Hubs, and Vehicles tables via SQLite; tests whether driver ratings, experience, and vehicle status/maintenance data actually predict delivery outcomes, using SQL joins and aggregations |
 
 ## Key Findings
 
@@ -37,19 +46,22 @@ The dataset contains 15 columns covering order details, delivery timing, and out
 - The dataset passed a full cleaning checklist (no duplicates, no out-of-range values). The only missing data (252 rows) is fully explained by legitimate order cancellations.
 - Delivery time and customer satisfaction show a weak overall correlation (-0.287), but a bucketed breakdown reveals a **sharp satisfaction "tipping point" at 3 days**. Satisfaction is stable under 72 hours (~4.3/5), then drops to 3.04 for 3-5 day deliveries, and falls to 1.78 for deliveries over 5 days.
 - Performance is fairly stable across 24 months (Jan 2023 – Dec 2024), with a mild overall decline in 2024. **May–July 2024** stands out as the weakest stretch, with delivery time, on-time rate, and satisfaction all degrading simultaneously.
-- **Austin Hub** ranks lowest overall not due to a slow average, but due to tail risk. The highest rate of 5+ day deliveries (0.76%) among all hubs.
-- **Fort Worth Hub** has the slowest average delivery time despite handling low volume; a standard deviation check confirmed this is a consistent (not outlier-driven) effect, though modest. A lower-confidence finding than Austin's.
+- **Austin Hub** ranks lowest overall not due to a slow average, but due to tail risk. The highest rate of 5+ day deliveries (0.76%) among all hubs, is a pattern the average alone would not have shown.
+- **Fort Worth Hub** has the slowest average delivery time despite handling low volume; a standard deviation check confirmed this is a consistent (not outlier-driven) effect, though modest.
 - Driver-level satisfaction differences are narrow (0.17-point spread, best to worst), the weakest signal found in the project. One driver (Karen Hernandez) stands out with both the slowest average delivery time and lowest satisfaction score, though a delay-reason investigation found no specific identifiable cause.
+- Integrating driver and vehicle data via SQL revealed a consistent null result across four separate "quality" signals: `Performance Rating`, `Experience Years`, `Vehicle Status`, and `Maintenance count Alert` (found to be redundant with Vehicle Status). **None showed a meaningful relationship** with delivery time, satisfaction, or breakdown-delay rate. This suggests operational outcomes are driven by factors other than the driver/vehicle attributes captured in these tables.
+- Vehicles currently flagged "Maintenance" showed a breakdown-delay rate (2.14%) nearly identical to "Active" vehicles (2.26%), counter to the intuitive expectation and a reminder to normalize by volume rather than compare raw counts.
 
 ## Tools & Concepts Used
 
-- **pandas** — filtering, `.groupby()`, `.agg()`, handling missing data
+- **pandas** — filtering, `.groupby()`, `.agg()`, handling missing data, merging/joining data sources
+- **SQL / SQLite** — `JOIN`, `GROUP BY`, aggregate functions (`COUNT`, `AVG`, `ROUND`), multi-table relational analysis via `sqlite3` and `pd.read_sql()`
 - **NumPy** — underlying numerical operations
 - **Core Python** — `len()`, `sum()`, `round()`, `sorted()`, `enumerate()`, `zip()`, custom functions
 - **matplotlib** — distribution visualization
 
 ## Next Steps
 
-- Investigate route/geography-level data if available, to test whether individual driver performance differences (e.g. Karen Hernandez) are explained by factors not captured in delay reason data
-- Extend the `kpi_dashboard()` function to a vehicle-type breakdown
-- Explore whether the May–July 2024 dip correlates with any external/seasonal factor
+- Explore `Hubs.csv`'s `Hub Capacity` field against order volume per hub, to test whether hubs operating over/under capacity show different performance.
+- Investigate whether `Order Date` timing could approximate vehicle status at time of delivery, rather than relying on the current status snapshot.
+- Explore whether the May–July 2024 dip correlates with any external/seasonal factor.
