@@ -26,7 +26,8 @@ ENV/
 .DS_Store
 Thumbs.db
 
-Data files
+# Data files (raw data excluded from repo)
 Orders.csv
 
-*
+# SQLite databases (generated from source data, excluded to keep repo light)
+*.db
