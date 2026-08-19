@@ -64,8 +64,17 @@ Three supplementary tables provide additional detail, joined to the main dataset
 - **NumPy** — underlying numerical operations
 - **Core Python** — `len()`, `sum()`, `round()`, `sorted()`, `enumerate()`, `zip()`, custom functions
 
-## Next Steps
+## Live Interactive Dashboard
 
-- Investigate operational capacity and staffing levels during May–July 2024 to test the hypothesis that operational stress (not mechanical failure) drove the dip
-- Explore `Hubs.csv`'s `Hub Capacity` field against order volume per hub, to test whether hubs operating over/under capacity show different performance
-- If external data becomes available (weather, regional events, holidays), test correlation with the May–July 2024 slowdown
+**[View the Delivery Operations Executive Dashboard on Tableau Public →](http://public.tableau.com/app/profile/diana.lara3614/viz/DeliveryOperationsExecutiveDashboard/Dashboard1)**
+
+An interactive executive dashboard built in Tableau Public, translating the notebook findings into a filterable, stakeholder-facing view with 6 charts:
+
+1. **Delivery Time Trend** — Monthly average delivery hours over 24 months, filterable by Order Month
+2. **Hub Performance Matrix** — Scatter plot: utilization % vs. avg delivery time (visually confirms capacity does NOT predict performance)
+3. **Hubs Hit Hardest** — Bar chart of May-July 2024 dip magnitude by hub, revealing the geographic pattern (El Paso and Fort Worth hit hardest, not the over-capacity Dallas Main)
+4. **On-Time Delivery Performance by Hub** — Filterable by Hub and Driver Name
+5. **Average Delivery Time by Vehicle Type** — Pie chart showing minimal variation across vehicle types
+6. **Satisfaction Tipping Point** — Full scatter plot of individual orders (delivery time vs. satisfaction), color-coded by May-July 2024 vs. rest of dataset
+
+Includes interactive filters for Hub, Order Month, and Driver Name, built on a relational data model joining five separate CSV exports from the notebooks above.
