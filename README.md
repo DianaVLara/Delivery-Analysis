@@ -66,7 +66,7 @@ Three supplementary tables provide additional detail, joined to the main dataset
 
 ## Live Interactive Dashboard
 
-**[View the Delivery Operations Executive Dashboard on Tableau Public →](http://public.tableau.com/app/profile/diana.lara3614/viz/DeliveryOperationsExecutiveDashboard/Dashboard1)**
+**[View the Delivery Operations Executive Dashboard on Tableau Public →]([http://public.tableau.com/app/profile/diana.lara3614/viz/DeliveryOperationsExecutiveDashboard/Dashboard](https://public.tableau.com/app/profile/diana.lara3614/viz/DeliveryOperationsExecutiveDashboard/Dashboard))**
 
 An interactive executive dashboard built in Tableau Public, translating the notebook findings into a filterable, stakeholder-facing view with 6 charts:
 
